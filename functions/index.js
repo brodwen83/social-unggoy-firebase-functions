@@ -26,7 +26,10 @@ app.get('/screams', async (request, response) => {
       });
       return response.json(screams);
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+      console.error(err);
+      return response.status(500).json(err);
+    });
 });
 
 app.post('/scream', (request, response) => {
@@ -110,10 +113,39 @@ app.post('/signup', (request, response) => {
       console.error(error);
       if (error.code === 'auth/email-already-in-use') {
         return response.status(400).json({ email: 'Email already in use' });
-      } else {
-        return response.status(500).json({ error: error.code });
-      }
+      } else return response.status(500).json({ error: error.code });
     });
+});
+
+app.post('/login', async (request, response) => {
+  const { email, password } = request.body;
+
+  let errors = {};
+
+  if (isEmpty(email)) {
+    errors.email = 'Must not be empty';
+  } else if (!isEmail(email)) {
+    errors.email = 'Must be a valid email address';
+  }
+  if (isEmpty(password)) errors.password = 'Must not be empty';
+
+  if (!isEmpty(errors)) return response.status(400).json(errors);
+
+  try {
+    const data = await firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password);
+    const idToken = await data.user.getIdToken();
+
+    return response.json({ token: idToken });
+  } catch (error) {
+    console.error(error);
+    if (error.code === 'auth/wrong-password') {
+      return response
+        .status(403)
+        .json({ general: 'Wrong credentials, please try again' });
+    } else return response.status(500).json({ error: error.code });
+  }
 });
 
 exports.api = functions.https.onRequest(app);
