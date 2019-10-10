@@ -11,6 +11,7 @@ firebase.initializeApp(firebaseConfig);
 const db = admin.firestore();
 
 const { isEmail, isEmpty } = require('./util/helpers');
+const Authenticate = require('./middlewares/Authenticate');
 
 app.get('/screams', async (request, response) => {
   try {
@@ -37,11 +38,11 @@ app.get('/screams', async (request, response) => {
   }
 });
 
-app.post('/scream', async (request, response) => {
-  const { body, userHandle } = request.body;
+app.post('/scream', Authenticate, async (request, response) => {
+  const { body } = request.body;
   const newScream = {
     body,
-    userHandle,
+    userHandle: request.user.handle,
     createdAt: new Date().toISOString(),
   };
 
