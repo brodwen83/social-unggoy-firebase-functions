@@ -11,7 +11,7 @@ firebase.initializeApp(firebaseConfig);
 const db = admin.firestore();
 
 const { isEmail, isEmpty } = require('./util/helpers');
-const Authenticate = require('./middlewares/Authenticate');
+const Authenticate = require('./middlewares/authenticate');
 
 app.get('/screams', async (request, response) => {
   try {
