@@ -10,6 +10,8 @@ firebase.initializeApp(firebaseConfig);
 
 const db = admin.firestore();
 
+const { isEmail, isEmpty } = require('./util/helpers');
+
 app.get('/screams', async (request, response) => {
   db.collection('screams')
     .orderBy('createdAt', desc)
@@ -59,7 +61,19 @@ app.post('/signup', (request, response) => {
     handle,
   };
 
-  // TODO: valid data
+  let errors = {};
+
+  if (isEmpty(newUser.email)) {
+    errors.email = 'Must not be empty';
+  } else if (!isEmail(newUser.email)) {
+    errors.email = 'Must be a valid email';
+  }
+  if (isEmpty(newUser.password)) errors.password = 'Must not be empty';
+  if (newUser.password !== newUser.confirmPassword)
+    errors.password = 'Password must match';
+  if (isEmpty(newUser.handle)) errors.handle = 'Must not be empty';
+
+  if (!isEmpty(errors)) return response.status(400).json(errors);
 
   let token, userId;
   db.doc(`/users/${newUser.handle}`)
