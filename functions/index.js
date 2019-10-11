@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const app = require('express')();
 
 const Authenticate = require('./middlewares/authenticate');
-const { getAllScreams, postOneScream } = require('./handlers/screams');
+const { getAllScreams, createScream } = require('./handlers/screams');
 const {
   signUp,
   login,
@@ -13,7 +13,7 @@ const {
 
 // Screams routes
 app.get('/screams', getAllScreams);
-app.post('/scream', Authenticate, postOneScream);
+app.post('/scream', Authenticate, createScream);
 
 // Users routes
 app.post('/signup', signUp);
