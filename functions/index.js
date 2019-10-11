@@ -2,9 +2,9 @@ const functions = require('firebase-functions');
 const app = require('express')();
 
 const Authenticate = require('./middlewares/authenticate');
-const { getAllScreams, postOneScream } = require('./handlers/screams');
+const { getAllScreams, createScream } = require('./handlers/screams');
 const {
-  signup,
+  signUp,
   login,
   uploadImage,
   addUserDetails,
@@ -13,10 +13,10 @@ const {
 
 // Screams routes
 app.get('/screams', getAllScreams);
-app.post('/scream', Authenticate, postOneScream);
+app.post('/scream', Authenticate, createScream);
 
 // Users routes
-app.post('/signup', signup);
+app.post('/signup', signUp);
 app.post('/login', login);
 app.post('/user/image', Authenticate, uploadImage);
 app.post('/user', Authenticate, addUserDetails);
