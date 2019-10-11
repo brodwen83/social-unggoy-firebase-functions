@@ -10,7 +10,7 @@ exports.validateLoginCredentials = ({ email, password }) => {
   }
   if (isEmpty(password)) errors.password = 'Must not be empty';
 
-  return errors;
+  return { errors, isInvalid: !isEmpty(errors) };
 };
 
 exports.validateSignupCredentials = ({
@@ -30,5 +30,5 @@ exports.validateSignupCredentials = ({
   if (password !== confirmPassword) errors.password = 'Password must match';
   if (isEmpty(handle)) errors.handle = 'Must not be empty';
 
-  return errors;
+  return { errors, isInvalid: !isEmpty(errors) };
 };

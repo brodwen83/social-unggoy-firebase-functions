@@ -3,7 +3,6 @@ const firebaseConfig = require('../config/firebase');
 firebase.initializeApp(firebaseConfig);
 
 const { db } = require('../util/admin');
-const { isEmpty } = require('../util/helpers');
 const {
   validateLoginCredentials,
   validateSignupCredentials,
@@ -12,14 +11,14 @@ const {
 exports.signup = async (request, response) => {
   const { email, password, confirmPassword, handle } = request.body;
 
-  const errors = validateSignupCredentials({
+  const { errors, isInvalid } = validateSignupCredentials({
     email,
     password,
     confirmPassword,
     handle,
   });
 
-  if (!isEmpty(errors)) return response.status(400).json(errors);
+  if (isInvalid) return response.status(400).json(errors);
 
   let token, userId;
 
@@ -61,9 +60,9 @@ exports.signup = async (request, response) => {
 
 exports.login = async (request, response) => {
   const { email, password } = request.body;
-  const errors = validateLoginCredentials({ ...request.body });
+  const { errors, isInvalid } = validateLoginCredentials({ ...request.body });
 
-  if (!isEmpty(errors)) return response.status(400).json(errors);
+  if (isInvalid) return response.status(400).json(errors);
 
   try {
     const data = await firebase
