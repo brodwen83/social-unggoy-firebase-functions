@@ -20,7 +20,22 @@ const isEmail = email => {
   else return false;
 };
 
+const reduceUserDetails = ({ bio, website, location }) => {
+  let userDetails = {};
+
+  if (!isEmpty(bio)) userDetails.bio = bio;
+  if (!isEmpty(website)) {
+    if (website.trim().substring(0, 4) !== 'http') {
+      userDetails.website = `http://${website.trim()}`;
+    } else userDetails.website = website;
+  }
+  if (!isEmpty(location)) userDetails.location = location;
+
+  return userDetails;
+};
+
 module.exports = {
   isEmpty,
   isEmail,
+  reduceUserDetails,
 };
