@@ -1,5 +1,4 @@
-const admin = require('firebase-admin');
-const db = admin.firestore();
+const { admin, db } = require('../util/admin');
 
 const Authenticate = async (request, response, next) => {
   const { authorization } = request.headers;
@@ -31,7 +30,7 @@ const Authenticate = async (request, response, next) => {
       return response
         .status(403)
         .json({ authenticationError: 'Unauthorized / Forbidden token' });
-    } else return response.status(403).json({ error: error.code });
+    } else return response.status(500).json(error);
   }
 };
 
