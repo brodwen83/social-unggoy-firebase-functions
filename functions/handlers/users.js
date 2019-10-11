@@ -12,7 +12,9 @@ const {
   validateLoginCredentials,
   validateSignupCredentials,
 } = require('../util/validators');
+const { reduceUserDetails } = require('../util/helpers');
 
+// User Signup
 exports.signup = async (request, response) => {
   const { email, password, confirmPassword, handle } = request.body;
 
@@ -89,6 +91,21 @@ exports.login = async (request, response) => {
   }
 };
 
+// Add User Details
+exports.addUserDetails = async (request, response) => {
+  let userDetails = reduceUserDetails({ ...request.body });
+
+  try {
+    await db.doc(`/users/${request.user.handle}`).update(userDetails);
+
+    return response.status(201).json({ message: 'User updated successfully.' });
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ error: error.code });
+  }
+};
+
+// Upload Image
 exports.uploadImage = (request, response) => {
   const acceptedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
   const busboy = new BusBoy({ headers: request.headers });

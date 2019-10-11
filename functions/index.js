@@ -3,7 +3,12 @@ const app = require('express')();
 
 const Authenticate = require('./middlewares/authenticate');
 const { getAllScreams, postOneScream } = require('./handlers/screams');
-const { signup, login, uploadImage } = require('./handlers/users');
+const {
+  signup,
+  login,
+  uploadImage,
+  addUserDetails,
+} = require('./handlers/users');
 
 // Screams routes
 app.get('/screams', getAllScreams);
@@ -13,5 +18,6 @@ app.post('/scream', Authenticate, postOneScream);
 app.post('/signup', signup);
 app.post('/login', login);
 app.post('/user/image', Authenticate, uploadImage);
+app.post('/user', Authenticate, addUserDetails);
 
 exports.api = functions.https.onRequest(app);
