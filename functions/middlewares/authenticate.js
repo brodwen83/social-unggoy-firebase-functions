@@ -14,7 +14,6 @@ const Authenticate = async (request, response, next) => {
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
 
-    console.log('decodedToken', decodedToken);
     request.user = decodedToken;
     const data = await db
       .collection('users')
