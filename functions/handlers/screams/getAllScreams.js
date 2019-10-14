@@ -2,14 +2,14 @@ const { db } = require('../../util/admin');
 
 const getAllScreams = async (request, response) => {
   try {
-    const data = await db
+    const snapshot = await db
       .collection('screams')
       .orderBy('createdAt', 'desc')
       .get();
 
-    if (data) {
+    if (snapshot) {
       let screams = [];
-      data.forEach(doc => {
+      snapshot.forEach(doc => {
         screams.push({
           screamId: doc.id,
           ...doc.data(),
