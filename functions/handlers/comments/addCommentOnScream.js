@@ -9,8 +9,7 @@ const addCommentOnScream = async (req, res) => {
   if (isEmpty(body))
     return res.status(400).json({ comment: 'should not be empty.' });
 
-  const screamDoc = db.doc(`/screams/${screamId}`);
-  let scream;
+  const screamRef = db.doc(`/screams/${screamId}`);
 
   try {
     const newComment = {
@@ -21,17 +20,15 @@ const addCommentOnScream = async (req, res) => {
       createdAt: new Date().toISOString(),
     };
 
-    const screamData = await screamDoc.get();
+    const doc = await screamRef.get();
 
-    if (!screamData.exists)
+    if (!doc.exists)
       return res.status(404).json({ error: 'scream not found.' });
 
     const comment = await db.collection('comments').add(newComment);
-
-    scream = screamData.data();
-    scream.commentCount++;
-
-    await screamDoc.update({ commentCount: scream.commentCount });
+    await doc.ref.update({
+      commentCount: doc.data().commentCount + 1,
+    });
 
     return res.status(201).json({
       message: `comment ${comment.id} added successfully.`,
