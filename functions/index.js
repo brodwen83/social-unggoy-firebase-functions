@@ -21,14 +21,10 @@ const { addCommentOnScream } = require('./handlers/comments');
 app.get('/screams', getAllScreams);
 app.post('/scream', Authenticate, createScream);
 app.get('/scream/:screamId', getScream);
+app.post('/scream/:screamId/comment', Authenticate, addCommentOnScream);
 // TODO delete scream
 // TODO like a scream
 // TODO unlike a scream
-
-// Comments routes
-app.post('/comment', Authenticate, addCommentOnScream);
-
-// TODO commment on a scream
 
 // Users routes
 app.post('/signup', signUp);
