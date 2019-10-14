@@ -1,35 +1,35 @@
 const { admin, db } = require('../util/admin');
 
-const Authenticate = async (request, response, next) => {
-  const { authorization } = request.headers;
+const Authenticate = async (req, res, next) => {
+  const { authorization } = req.headers;
   let idToken;
 
   if (authorization && authorization.startsWith('Bearer ')) {
     idToken = authorization.split('Bearer ')[1];
   } else {
     console.error('No token found');
-    return response.status(403).json({ error: 'Unauthorized' });
+    return res.status(403).json({ error: 'Unauthorized' });
   }
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
 
-    request.user = decodedToken;
-    const data = await db
+    req.user = decodedToken;
+    const userData = await db
       .collection('users')
-      .where('userId', '==', request.user.uid)
+      .where('userId', '==', req.user.uid)
       .limit(1)
       .get();
 
-    request.user.handle = await data.docs[0].data().handle;
+    req.user = { ...userData.docs[0].data() };
     return next();
   } catch (error) {
     console.error('Error while verifying token');
     if (error.code === 'auth/argument-error') {
-      return response
+      return res
         .status(403)
         .json({ authenticationError: 'Unauthorized / Forbidden token' });
-    } else return response.status(500).json(error);
+    } else return res.status(500).json(error);
   }
 };
 
