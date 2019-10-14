@@ -2,7 +2,11 @@ const functions = require('firebase-functions');
 const app = require('express')();
 
 const Authenticate = require('./middlewares/authenticate');
-const { getAllScreams, createScream } = require('./handlers/screams');
+const {
+  getAllScreams,
+  createScream,
+  getScream,
+} = require('./handlers/screams');
 const {
   signUp,
   login,
@@ -11,9 +15,20 @@ const {
   getAuthenticatedUser,
 } = require('./handlers/users');
 
+const { addCommentOnScream } = require('./handlers/comments');
+
 // Screams routes
 app.get('/screams', getAllScreams);
 app.post('/scream', Authenticate, createScream);
+app.get('/scream/:screamId', getScream);
+// TODO delete scream
+// TODO like a scream
+// TODO unlike a scream
+
+// Comments routes
+app.post('/comment', Authenticate, addCommentOnScream);
+
+// TODO commment on a scream
 
 // Users routes
 app.post('/signup', signUp);

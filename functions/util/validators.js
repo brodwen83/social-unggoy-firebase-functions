@@ -32,3 +32,13 @@ exports.validateSignupCredentials = ({
 
   return { errors, isInvalid: !isEmpty(errors) };
 };
+
+exports.validateUserComment = ({ userHandle, screamId, body }) => {
+  let errors = {};
+
+  if (isEmpty(userHandle)) errors.userHandle = 'is required';
+  if (isEmpty(screamId)) errors.screamId = ' is required';
+  if (isEmpty(body)) errors.body = 'body should not be empty';
+
+  return { errors, isInvalid: !isEmpty(errors) };
+};
