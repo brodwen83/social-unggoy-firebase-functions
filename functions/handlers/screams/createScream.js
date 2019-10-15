@@ -1,22 +1,27 @@
 const { db } = require('../../util/admin');
 
-const createScream = async (request, response) => {
-  const { body } = request.body;
+const createScream = async (req, res) => {
+  const { body } = req.body;
+  const { handle, imageUrl } = req.user;
   const newScream = {
     body,
-    userHandle: request.user.handle,
+    userHandle: handle,
+    userImage: imageUrl,
     createdAt: new Date().toISOString(),
+    likeCount: 0,
+    commentCount: 0,
   };
 
   try {
     const document = await db.collection('screams').add(newScream);
+    const scream = newScream;
 
-    return response
-      .status(200)
-      .json({ message: `document ${document.id} created successfully` });
+    scream.screamId = document.id;
+
+    return res.status(200).json(scream);
   } catch (error) {
     console.error(err);
-    return response.status(500).json({ error: 'something went wrong' });
+    return res.status(500).json({ error: 'something went wrong' });
   }
 };
 
