@@ -18,6 +18,8 @@ const {
   uploadImage,
   addUserDetails,
   getAuthenticatedUser,
+  getUserDetails,
+  markNotificationsRead,
 } = require('./handlers/users');
 
 const { addCommentOnScream } = require('./handlers/comments');
@@ -40,6 +42,8 @@ app.post('/login', login);
 app.post('/user/image', Authenticate, uploadImage);
 app.post('/user', Authenticate, addUserDetails);
 app.get('/user', Authenticate, getAuthenticatedUser);
+app.get('/user/:userHandle', getUserDetails);
+app.post('/notifications', Authenticate, markNotificationsRead);
 
 exports.api = functions.https.onRequest(app);
 
