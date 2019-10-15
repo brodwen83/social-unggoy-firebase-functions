@@ -1,22 +1,5 @@
 const { db } = require('../../util/admin');
 
-// const deleteComments = async screamId => {
-//   console.log('deleteComments->screamID', screamId);
-
-//   const snapshot = await db
-//     .collection('comments')
-//     .where('screamId', '==', `${screamId}34`)
-//     .get();
-
-//   if (snapshot.length) {
-//     snapshot.forEach(async doc => {
-//       await db.doc(`/comments/${doc.id}`).delete();
-//     });
-//   } else {
-//     throw new Error('comments not found');
-//   }
-// };
-
 const deleteScream = async (req, res) => {
   const { screamId } = req.params;
   const { handle } = req.user;
