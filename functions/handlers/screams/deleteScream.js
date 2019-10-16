@@ -18,38 +18,38 @@ const deleteScream = async (req, res) => {
 
     await screamDoc.delete();
 
-    const { commentCount, likeCount } = scream.data();
+    // const { commentCount, likeCount } = scream.data();
 
-    if (commentCount > 0) {
-      let batch = db.batch();
-      const commentsSnapshot = await db
-        .collection('comments')
-        .where('screamId', '==', screamId)
-        .get();
+    // if (commentCount > 0) {
+    //   let batch = db.batch();
+    //   const commentsSnapshot = await db
+    //     .collection('comments')
+    //     .where('screamId', '==', screamId)
+    //     .get();
 
-      commentsSnapshot.forEach(comment => {
-        batch.delete(comment.ref);
-      });
+    //   commentsSnapshot.forEach(comment => {
+    //     batch.delete(comment.ref);
+    //   });
 
-      batch.commit();
-    }
+    //   batch.commit();
+    // }
 
-    if (likeCount > 0) {
-      let batch = db.batch();
-      const likeSnapshot = await db
-        .collection('likes')
-        .where('screamId', '==', screamId)
-        .get();
+    // if (likeCount > 0) {
+    //   let batch = db.batch();
+    //   const likeSnapshot = await db
+    //     .collection('likes')
+    //     .where('screamId', '==', screamId)
+    //     .get();
 
-      if (likeSnapshot) {
-        likeSnapshot.forEach(like => {
-          // await db.doc(`/likes/${like.id}`).delete();
-          batch.delete(like.ref);
-        });
+    //   if (likeSnapshot) {
+    //     likeSnapshot.forEach(like => {
+    //       // await db.doc(`/likes/${like.id}`).delete();
+    //       batch.delete(like.ref);
+    //     });
 
-        batch.commit();
-      }
-    }
+    //     batch.commit();
+    //   }
+    // }
 
     return res.status(200).json({ message: 'Scream deleted successfully.' });
   } catch (error) {
