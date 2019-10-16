@@ -137,7 +137,7 @@ exports.onUserImageProfileChange = functions.firestore
           batch.update(scream.ref, { userImage: change.after.data().imageUrl });
         });
 
-        batch.commit();
+        await batch.commit();
       }
       return;
     } catch (error) {
