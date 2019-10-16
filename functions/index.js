@@ -114,3 +114,28 @@ exports.createNotificationOnComment = functions.firestore
       return;
     }
   });
+
+exports.onUserImageProfileChange = functions.firestore
+  .document('/users/{userId}')
+  .onUpdate(async change => {
+    console.log('change.before.data()', change.before.data());
+    console.log('change.after.data()', change.after.data());
+    const imageUrlBefore = change.before.data().imageUrl;
+    const imageUrlAfter = change.after.data().imageUrl;
+
+    if (imageUrlAfter !== imageUrlBefore) {
+      console.log('image has changed');
+      let batch = db.batch();
+
+      const userScreams = await db
+        .collection('screams')
+        .where('userHandle', '==', change.before.data().handle)
+        .get();
+
+      userScreams.forEach(scream => {
+        batch.update(scream.ref, { userImage: change.after.data().imageUrl });
+      });
+
+      batch.commit();
+    }
+  });
