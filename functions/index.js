@@ -48,7 +48,6 @@ exports.createNotificationOnLike = functions.firestore
   .document('likes/{id}')
   .onCreate(async snapshot => {
     try {
-      console.log('triggers createNotificationOnLike');
       const screamDoc = await db
         .doc(`/screams/${snapshot.data().screamId}`)
         .get();
@@ -118,14 +117,11 @@ exports.createNotificationOnComment = functions.firestore
 exports.onUserImageProfileChange = functions.firestore
   .document('/users/{userId}')
   .onUpdate(async change => {
-    console.log('change.before.data()', change.before.data());
-    console.log('change.after.data()', change.after.data());
     const imageUrlBefore = change.before.data().imageUrl;
     const imageUrlAfter = change.after.data().imageUrl;
 
     try {
       if (imageUrlAfter !== imageUrlBefore) {
-        console.log('image has changed');
         let batch = db.batch();
 
         const userScreams = await db
@@ -187,7 +183,7 @@ exports.onScreamDelete = functions.firestore
 
       return;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return;
     }
   });
