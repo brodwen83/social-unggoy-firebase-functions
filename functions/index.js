@@ -150,7 +150,9 @@ exports.onScreamDelete = functions.firestore
   .document('/screams/{screamId}')
   .onDelete(async (snapshot, context) => {
     const { screamId } = context.params;
-    let batch = db.batch();
+    let cbatch = db.batch();
+    let lbatch = db.batch();
+    let nbatch = db.batch();
 
     try {
       const comments = await db
@@ -159,9 +161,9 @@ exports.onScreamDelete = functions.firestore
         .get();
 
       comments.forEach(comment => {
-        batch.delete(comment.ref);
+        cbatch.delete(comment.ref);
       });
-      batch.commit();
+      await cbatch.commit();
 
       const likes = await db
         .collection('likes')
@@ -169,9 +171,9 @@ exports.onScreamDelete = functions.firestore
         .get();
 
       likes.forEach(like => {
-        batch.delete(like.ref);
+        lbatch.delete(like.ref);
       });
-      batch.commit();
+      await lbatch.commit();
 
       const notifications = await db
         .collection('notifications')
@@ -179,9 +181,9 @@ exports.onScreamDelete = functions.firestore
         .get();
 
       notifications.forEach(notification => {
-        batch.delete(notification.ref);
+        nbatch.delete(notification.ref);
       });
-      batch.commit();
+      await nbatch.commit();
 
       return;
     } catch (error) {
