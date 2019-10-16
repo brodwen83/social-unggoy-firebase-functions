@@ -51,7 +51,10 @@ const signUp = async (request, response) => {
     console.error(error);
     if (error.code === 'auth/email-already-in-use') {
       return response.status(400).json({ email: 'Email already in use' });
-    } else return response.status(500).json({ error: error.code });
+    } else
+      return response
+        .status(500)
+        .json({ general: 'Something went wrong. Please try again' });
   }
 };
 

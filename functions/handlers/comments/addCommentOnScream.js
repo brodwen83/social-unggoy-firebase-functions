@@ -23,7 +23,7 @@ const addCommentOnScream = async (req, res) => {
     const doc = await screamRef.get();
 
     if (!doc.exists)
-      return res.status(404).json({ error: 'scream not found.' });
+      return res.status(404).json({ comment: 'scream not found.' });
 
     const comment = await db.collection('comments').add(newComment);
     await doc.ref.update({

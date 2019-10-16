@@ -16,11 +16,9 @@ const login = async (request, response) => {
     return response.json({ token: `Bearer ${idToken}` });
   } catch (error) {
     console.error(error);
-    if (error.code === 'auth/wrong-password') {
-      return response
-        .status(403)
-        .json({ general: 'Wrong credentials, please try again' });
-    } else return response.status(500).json({ error: error.code });
+    return response
+      .status(403)
+      .json({ general: 'Wrong credentials, please try again' });
   }
 };
 
