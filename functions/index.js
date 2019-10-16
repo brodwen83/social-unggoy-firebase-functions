@@ -32,9 +32,6 @@ app.post('/scream/:screamId/comment', Authenticate, addCommentOnScream);
 app.get('/scream/:screamId/like', Authenticate, likeScream);
 app.get('/scream/:screamId/unlike', Authenticate, unlikeScream);
 app.delete('/scream/:screamId', Authenticate, deleteScream);
-// TODO delete scream
-// TODO like a scream
-// TODO unlike a scream
 
 // Users routes
 app.post('/signup', signUp);
@@ -56,7 +53,10 @@ exports.createNotificationOnLike = functions.firestore
         .doc(`/screams/${snapshot.data().screamId}`)
         .get();
 
-      if (screamDoc.exists) {
+      if (
+        screamDoc.exists &&
+        screamDoc.data().userHandle !== snapshot.data().userHandle
+      ) {
         await db.doc(`/notifications/${snapshot.id}`).set({
           recipient: screamDoc.data().userHandle,
           sender: snapshot.data().userHandle,
@@ -94,7 +94,10 @@ exports.createNotificationOnComment = functions.firestore
         .doc(`/screams/${snapshot.data().screamId}`)
         .get();
 
-      if (screamDoc.exists) {
+      if (
+        screamDoc.exists &&
+        screamDoc.data().userHandle !== snapshot.data().userHandle
+      ) {
         await db.doc(`/notifications/${snapshot.id}`).set({
           recipient: screamDoc.data().userHandle,
           sender: snapshot.data().userHandle,
