@@ -11,7 +11,6 @@ let db = {
       location: 'Philippines',
     },
   ],
-
   screams: [
     {
       screamId: '6TklGIgw6CopOKCE9Zs9',
@@ -22,13 +21,22 @@ let db = {
       commentCount: 2,
     },
   ],
-
   comments: [
     {
       userHandle: 'user',
       screamId: '6TklGIgw6CopOKCE9Zs9',
       body: 'nice one, mate',
       createdAt: '2019-10-11T06:29:16.317Z',
+    },
+  ],
+  notifications: [
+    {
+      recipient: 'user',
+      sender: 'john',
+      read: 'true | false',
+      screamId: '6TklGIgw6CopOKCE9Zs9',
+      type: 'like | comment',
+      createdAt: '2019-10-10T04:58:34.642Z',
     },
   ],
 };

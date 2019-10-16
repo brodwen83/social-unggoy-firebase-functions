@@ -1,6 +1,8 @@
 const functions = require('firebase-functions');
 const app = require('express')();
 
+const { db, admin } = require('./util/admin');
+
 const Authenticate = require('./middlewares/authenticate');
 const {
   getAllScreams,
@@ -16,6 +18,8 @@ const {
   uploadImage,
   addUserDetails,
   getAuthenticatedUser,
+  getUserDetails,
+  markNotificationsRead,
 } = require('./handlers/users');
 
 const { addCommentOnScream } = require('./handlers/comments');
@@ -38,5 +42,72 @@ app.post('/login', login);
 app.post('/user/image', Authenticate, uploadImage);
 app.post('/user', Authenticate, addUserDetails);
 app.get('/user', Authenticate, getAuthenticatedUser);
+app.get('/user/:userHandle', getUserDetails);
+app.post('/notifications', Authenticate, markNotificationsRead);
 
 exports.api = functions.https.onRequest(app);
+
+exports.createNotificationOnLike = functions.firestore
+  .document('likes/{id}')
+  .onCreate(async snapshot => {
+    try {
+      console.log('triggers createNotificationOnLike');
+      const screamDoc = await db
+        .doc(`/screams/${snapshot.data().screamId}`)
+        .get();
+
+      if (screamDoc.exists) {
+        await db.doc(`/notifications/${snapshot.id}`).set({
+          recipient: screamDoc.data().userHandle,
+          sender: snapshot.data().userHandle,
+          read: false,
+          screamId: screamDoc.id,
+          type: 'like',
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+
+      return;
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  });
+
+exports.deleteNotificationOnUnlike = functions.firestore
+  .document('likes/{id}')
+  .onDelete(async snapshot => {
+    try {
+      await db.doc(`/notifications/${snapshot.id}`).delete();
+      return;
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  });
+
+exports.createNotificationOnComment = functions.firestore
+  .document('comments/{id}')
+  .onCreate(async snapshot => {
+    try {
+      const screamDoc = await db
+        .doc(`/screams/${snapshot.data().screamId}`)
+        .get();
+
+      if (screamDoc.exists) {
+        await db.doc(`/notifications/${snapshot.id}`).set({
+          recipient: screamDoc.data().userHandle,
+          sender: snapshot.data().userHandle,
+          read: false,
+          screamId: screamDoc.id,
+          type: 'comment',
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+
+      return;
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  });
