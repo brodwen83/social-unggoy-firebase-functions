@@ -21,28 +21,33 @@ const deleteScream = async (req, res) => {
     const { commentCount, likeCount } = scream.data();
 
     if (commentCount > 0) {
+      let batch = db.batch();
       const commentsSnapshot = await db
         .collection('comments')
         .where('screamId', '==', screamId)
         .get();
 
-      if (commentsSnapshot) {
-        commentsSnapshot.forEach(async comment => {
-          await db.doc(`/comments/${comment.id}`).delete();
-        });
-      }
+      commentsSnapshot.forEach(comment => {
+        batch.delete(comment.ref);
+      });
+
+      batch.commit();
     }
 
     if (likeCount > 0) {
+      let batch = db.batch();
       const likeSnapshot = await db
         .collection('likes')
         .where('screamId', '==', screamId)
         .get();
 
       if (likeSnapshot) {
-        likeSnapshot.forEach(async like => {
-          await db.doc(`/likes/${like.id}`).delete();
+        likeSnapshot.forEach(like => {
+          // await db.doc(`/likes/${like.id}`).delete();
+          batch.delete(like.ref);
         });
+
+        batch.commit();
       }
     }
 
