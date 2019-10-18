@@ -19,7 +19,7 @@ const signUp = async (request, response) => {
   let token, userId;
 
   try {
-    const doc = db.doc(`/users/${handle}`).get();
+    const doc = await db.doc(`/users/${handle}`).get();
 
     if (doc.exists) {
       return response
