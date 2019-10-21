@@ -1,3 +1,4 @@
+const cors = require('cors');
 const functions = require('firebase-functions');
 const app = require('express')();
 
@@ -23,6 +24,12 @@ const {
 } = require('./handlers/users');
 
 const { addCommentOnScream } = require('./handlers/comments');
+
+app.use(
+  cors({
+    origin: true,
+  }),
+);
 
 // Screams routes
 app.get('/screams', getAllScreams);
